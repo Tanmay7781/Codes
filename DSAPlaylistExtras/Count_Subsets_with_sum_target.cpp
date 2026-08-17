@@ -36,3 +36,70 @@ public:
         return f(n - 1, target, arr, dp);
     }
 };
+
+// tabulation
+
+class Solution
+{
+public:
+    int perfectSum(vector<int> &arr, int target)
+    {
+        int n = arr.size();
+        vector<vector<int>> dp(n, vector<int>(target + 1, 0));
+
+        dp[0][0] = (arr[0] == 0) ? 2 : 1;
+
+        if (arr[0] != 0 && arr[0] <= target)
+            dp[0][arr[0]] = 1;
+
+        for (int ind = 1; ind < n; ind++)
+        {
+            for (int sum = 0; sum <= target; sum++)
+            {
+
+                int notPick = dp[ind - 1][sum];
+                int pick = 0;
+                if (arr[ind] <= sum)
+                    pick = dp[ind - 1][sum - arr[ind]];
+
+                dp[ind][sum] = pick + notPick;
+            }
+        }
+
+        return dp[n - 1][target];
+    }
+};
+
+// space-optimisation
+
+class Solution
+{
+public:
+    int perfectSum(vector<int> &arr, int target)
+    {
+        int n = arr.size();
+        vector<int> prev(target + 1, 0), cur(target + 1, 0);
+
+        prev[0] = (arr[0] == 0) ? 2 : 1;
+
+        if (arr[0] != 0 && arr[0] <= target)
+            prev[arr[0]] = 1;
+
+        for (int ind = 1; ind < n; ind++)
+        {
+            for (int sum = 0; sum <= target; sum++)
+            {
+
+                int notPick = prev[sum];
+                int pick = 0;
+                if (arr[ind] <= sum)
+                    pick = prev[sum - arr[ind]];
+
+                cur[sum] = pick + notPick;
+            }
+            prev = cur;
+        }
+
+        return prev[target];
+    }
+};
