@@ -37,4 +37,29 @@ public:
 };
 
 //tabulation
+class Solution {
+	public:
+	int knapsack(int W, vector<int> &val, vector<int> &wt) {
+		int n = val.size();
+		vector<vector<int>> dp(n, vector<int>(W + 1, -1));
+		
+		for (int i = 0; i<n; i++)
+			dp[i][0] = 0;
+		for (int j = 0; j <= W; j++)
+			dp[0][j] = (wt[0] <= j)?val[0]:0;
+		
+		for (int ind = 1; ind<n; ind++) {
+			for (int w = 1; w <= W; w++) {
+				if (wt[ind] <= w) {
+					dp[ind][w] = max(dp[ind - 1][w], val[ind] + dp[ind - 1][w - wt[ind]]);
+				} else {
+					dp[ind][w] = dp[ind - 1][w];
+				}
+			}
+		}
+		
+		return dp[n - 1][W];
+		
+	}
+};
 
