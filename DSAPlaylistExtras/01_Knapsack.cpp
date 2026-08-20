@@ -1,7 +1,7 @@
 #include <vector>
 using namespace std;
 
-//memoization
+// memoization
 class Solution
 {
 public:
@@ -36,30 +36,69 @@ public:
     }
 };
 
-//tabulation
-class Solution {
-	public:
-	int knapsack(int W, vector<int> &val, vector<int> &wt) {
-		int n = val.size();
-		vector<vector<int>> dp(n, vector<int>(W + 1, -1));
-		
-		for (int i = 0; i<n; i++)
-			dp[i][0] = 0;
-		for (int j = 0; j <= W; j++)
-			dp[0][j] = (wt[0] <= j)?val[0]:0;
-		
-		for (int ind = 1; ind<n; ind++) {
-			for (int w = 1; w <= W; w++) {
-				if (wt[ind] <= w) {
-					dp[ind][w] = max(dp[ind - 1][w], val[ind] + dp[ind - 1][w - wt[ind]]);
-				} else {
-					dp[ind][w] = dp[ind - 1][w];
-				}
-			}
-		}
-		
-		return dp[n - 1][W];
-		
-	}
+// tabulation
+class Solution
+{
+public:
+    int knapsack(int W, vector<int> &val, vector<int> &wt)
+    {
+        int n = val.size();
+        vector<vector<int>> dp(n, vector<int>(W + 1, -1));
+
+        for (int i = 0; i < n; i++)
+            dp[i][0] = 0;
+        for (int j = 0; j <= W; j++)
+            dp[0][j] = (wt[0] <= j) ? val[0] : 0;
+
+        for (int ind = 1; ind < n; ind++)
+        {
+            for (int w = 1; w <= W; w++)
+            {
+                if (wt[ind] <= w)
+                {
+                    dp[ind][w] = max(dp[ind - 1][w], val[ind] + dp[ind - 1][w - wt[ind]]);
+                }
+                else
+                {
+                    dp[ind][w] = dp[ind - 1][w];
+                }
+            }
+        }
+
+        return dp[n - 1][W];
+    }
 };
 
+// tabulation+spaceoptimisation
+class Solution
+{
+public:
+    int knapsack(int W, vector<int> &val, vector<int> &wt)
+    {
+        int n = val.size();
+        vector<int> prev(W + 1, 0), cur(W + 1, 0);
+
+        for (int w = wt[0]; w <= W; w++)
+        {
+            prev[w] = val[0];
+        }
+
+        for (int ind = 1; ind < n; ind++)
+        {
+            for (int w = 0; w <= W; w++)
+            {
+                int notTake = prev[w];
+                int take = INT_MIN;
+                if (wt[ind] <= w)
+                {
+                    take = val[ind] + prev[w - wt[ind]];
+                }
+
+                cur[w] = max(take, notTake);
+            }
+            prev = cur;
+        }
+
+        return prev[W];
+    }
+};
